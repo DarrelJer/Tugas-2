@@ -23,6 +23,8 @@ Tautan menuju adaptable : https://proyek-pbp-sepuh.adaptable.app
 
 **Bagan**
 
+![image](https://github.com/DarrelJer/Tugas-2/assets/124592793/ceaa00b1-3e3c-4ab3-a4a6-c55843c1fcd9)
+
 
 
 
