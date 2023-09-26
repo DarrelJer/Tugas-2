@@ -60,3 +60,245 @@ Perbedaan :
 
 
     
+
+
+# Tugas 3
+
+**1. Perbedaan POST dan GET dalam Django**
+     Dalam Django, `POST` dan `GET` umumnya digunakan untuk tujuan yang berbeda.
+     `POST` digunakan dalam pengisian form Django dimana *browser* akan menggabungkan data form, mengenkode untuk pengiriman, mengirimkan datanya ke server, dan menerima responsnya.
+   `GET` sebaliknya, dimana `GET` akan menggabungkan data yang dikirim ke dalam string dan menggunakannya untuk menyusun URL. URL tersebut berisi alamat tempat data harus dikirimkan, serta _keys_ dan _value_ dari data tersebut.
+
+
+**2. Apa perbedaan utama antara XML, JSON, dan HTML dalam konteks pengiriman data?**
+- XML : XML adalah bahasa markup yang menggunakan tag untuk mendefinisikan struktur dan makna data. XML dapat digunakan untuk menyimpan data yang kompleks. XML memisahkan data dari HTML dan menyederhanakan proses perubahan platform.
+- JSON : JSON adalah format data ringan yang digunakan untuk pertukaran data di web. JSON lebih sering digunakan untuk mengirim data dari server ke peramban web dan sebaliknya. JSON menggunakan pasangan key-values untuk merepresentasikan data.
+- HTML : HTML adalah bahasa markup yang digunakan untuk membuat halaman web dan aplikasi web. HTML menggunakan tag untuk menentukan struktur dan penampilan data. HTML dirancang untuk menampilkan data, bukan untuk mengangkut data. HTML tidak dapat menyimpan data yang kompleks atau terstruktur seperti XML atau JSON.
+
+
+**3. Mengapa JSON sering digunakan dalam pertukaran data antara aplikasi web modern?**
+JSON lebih sering digunakan karena JSON dirancang _self-decsribing_ yang membuat JSON lebih mudah untuk dibaca dan dipahami, JSON juga memiliki file yang lebih ringan yang membuat JSON lebih cepat dan efisien dalam mengirim dan menerima data melalui jaringan. JSON juga dapat menyimpan data yang ringan dan terstruktur, seperti objek, array, atau nilai primitif. Hal ini cocok untuk aplikasi web modern yang membutuhkan data yang dinamis dan interaktif.
+
+**4. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step**
+
+**Membuat `base.html` sebagai template untuk template-template HTML lainnya.**
+```
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        {% block meta %}
+        {% endblock meta %}
+    </head>
+
+    <body>
+        {% block content %}
+        {% endblock content %}
+    </body>
+</html>
+```
+
+**Mengedit `TEMPLATES` yang ada pada `settings.py` agar `base.html` bisa terdeteksi sebagai file template.**
+```
+...
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'], # Tambahkan kode ini
+        'APP_DIRS': True,
+        ...
+    }
+]
+...
+```
+
+**Mengubah kode pada berkas `main.html` agar menggunakan `base.html` sebagai template utamanya.**
+```
+{% extends 'base.html' %}
+...
+```
+
+**Membuat `forms.py` untuk membuat struktur form dan meng-import form tersebut pada `views.py`.**
+```
+from django.forms import ModelForm
+from main.models import Product
+
+class ProductForm(ModelForm):
+    class Meta:
+        model = Product
+        fields = ["name", "price", "description"]
+```
+
+**Membuat function `create_product` pada `views.py` agar formulir yang dibuat  dapat menambahkan data produk secara otomatis ketika data di-submit dari form.**
+
+```
+def create_product(request):
+    form = ProductForm(request.POST or None)
+
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return HttpResponseRedirect(reverse('main:show_main'))
+
+    context = {'form': form}
+    return render(request, "create_product.html", context)
+```
+
+**Mengubah fungsi `show_main` pada `views.py` supaya data dapat diakses pada `main.html`**
+```
+def show_main(request):
+    products = Product.objects.all()
+
+    context = {
+        'name': 'Darrel Jeremiah',
+        'class': 'PBP B',
+        'products': products
+    }
+
+    return render(request, "main.html", context)
+```
+
+```
+def create_product(request):
+    form = ProductForm(request.POST or None)
+
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return HttpResponseRedirect(reverse('main:show_main'))
+
+    context = {'form': form}
+    return render(request, "create_product.html", context)
+```
+
+```
+{% extends 'base.html' %} 
+
+{% block content %}
+<h1>Add New Product</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Add Product"/>
+            </td>
+        </tr>
+    </table>
+</form>
+
+{% endblock %}
+```
+
+**Membuat fungsi `show_json` dan `show_xml` pada `views.py` dan menambahkannya pada `urls.py`**
+- Membuat function `show_json`
+    ```
+    def show_json(request):
+    data = Product.objects.all()
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+    ```
+- Function `show_xml`
+
+  ```
+    def show_xml(request):
+      data = Product.objects.all()
+      return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+  ```
+- Meng-import kedua function tersebut pada `urls.py`
+  ```
+  from main.views import show_main, create_product, show_xml, show_json
+  ```
+
+- Membuat url untuk kedua fungsi tersebut agar dapat diakses sesuai url-nya masing-masing
+  ```
+  ...
+    path('xml/', show_xml, name='show_xml'), 
+    path('json/', show_json, name='show_json'), 
+    ...
+  ```
+
+
+**Membuat fungsi  `show_xml_by_id` dan `show_json_by_id` pada `views.py` dan menambahkannya pada `urls.py`**
+
+- `show_xml_by_id`
+    ```
+    def show_xml_by_id(request, id):
+      data = Product.objects.filter(pk=id)
+      return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+    ```
+- `show_json_by_id`
+  ```
+
+  def show_json_by_id(request, id):
+    data = Product.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+  ```
+- Meng-import kedua fungsi tersebut pada `urls.py`
+    ```
+    from main.views import show_main, create_product, show_xml, show_json, show_xml_by_id, show_json_by_id
+    ```
+- Membuat url untuk kedua fungsi tersebut agar dapat diakses sesuai url-nya masing-masing
+  ```
+  ...
+    path('xml/<int:id>/', show_xml_by_id, name='show_xml_by_id'),
+    path('json/<int:id>/', show_json_by_id, name='show_json_by_id'), 
+  ...
+  ```
+
+**5. Mengakses kelima URL di poin 2 menggunakan Postman, membuat screenshot dari hasil akses URL pada Postman, dan menambahkannya ke dalam README.md.**
+- JSON
+    <img width="1392" alt="image" src="https://github.com/DarrelJer/Tugas-2/assets/124592793/c2ae163c-1c9e-4a41-8a42-eeafb9ef378e">
+
+- XML
+    <img width="1392" alt="image" src="https://github.com/DarrelJer/Tugas-2/assets/124592793/2690e91d-dff9-4e5b-a3db-f6876d4370e3">
+
+- HTML
+    <img width="1392" alt="image" src="https://github.com/DarrelJer/Tugas-2/assets/124592793/9df14e3e-a668-4053-93c3-0d164f3f2a14">
+
+- JSON by ID
+    <img width="1392" alt="image" src="https://github.com/DarrelJer/Tugas-2/assets/124592793/ad41f2ee-101d-494b-9bbd-f8aadb47b0dd">
+- XML by ID
+    <img width="1392" alt="image" src="https://github.com/DarrelJer/Tugas-2/assets/124592793/a70607a0-24be-42ca-9d72-521ddf1d3fbd">
+
+
+
+# Tugas 4
+
+**1. Apa itu Django UserCreationForm, dan jelaskan apa kelebihan dan kekurangannya?**
+  Django UserCreationForm adalah sebuah form yang digunakan untuk membuat pengguna baru yang dapat menggunakan aplikasi web kita. Form ini memiliki tiga bidang yaitu:        username, password1, dan password2.  
+  
+  Kelebihan : 
+    - Mudah digunakan dan dapat dimodifikasi dengan mudah.
+    - Secara _default_ form ini sudah menyediakan bidang verifikasi, sehingga kita tidak perlu            menuliskannya lagi.
+
+  Kelemahan : 
+    - Form ini cocok untuk skenario autentikasi sederhana, jika kita mau menggunakan autentikasi dengan metode lain (seperti dengan nomor gawai atau melalui email), maka kita perlu membuat form sendiri atau dengan _third parties_
+  
+**2.Apa perbedaan antara autentikasi dan otorisasi dalam konteks Django, dan mengapa keduanya penting?**
+
+- Autentikasi : Proses verifikasi identitas pengguna. Pada implementasinya biasanya menggunakan form untuk login.
+- Otorisasi : pengendalian hak akses pengguna setelah pengguna tersebut berhasil diautentikasi
+
+  Keduanya penting untuk memproteksi dan menjamin keamanan data milik seseorang dan fitur ini berguna untuk mengatur fungsi dari website dengan memberikan fasilitas-fasilitas.
+
+**3. Apa itu cookies dalam konteks aplikasi web, dan bagaimana Django menggunakan cookies untuk mengelola data sesi pengguna?**
+
+  Cookies adalah sejenis data yang disimpan di komputer atau perangkat pengguna saat mereka berinteraksi pada web. Cookies digunakan untuk berbagai tujuan, termasuk pengelolaan sesi pengguna, pelacakan perilaku pengguna, dan penyimpanan preferensi pengguna. Salah satu penggunaan utama cookies adalah untuk mengidentifikasi pengguna dan menyimpan informasi tertentu tentang mereka selama kunjungan mereka ke sebuah situs web.
+
+  Dalam konteks Django, cookies sering digunakan untuk mengelola data sesi pengguna. Sesuai dengan pendekatan stateless HTTP, di mana setiap permintaan dari browser dianggap independen, Django menggunakan cookies untuk mengidentifikasi dan melacak sesi pengguna.
+
+**4.Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai?**
+
+  Penggunaan cookies dalam web bersifat aman jika digunakan dengan benar, risiko potensial yang harus diwaspadai adalah:
+  - Data Senditif : Cookies dapat digunakan untuk menyimpan data sensitif seperti token otentikasi atau informasi pengguna.
+  - Cross-Site Scripting : Cross Site Scripting adalah jenis serangan yang dapat mengakibatkan skrip berbahaya dijalankan pada browser pengguna.
+  - CSRF :  Serangan CSRF melibatkan penggunaan cookies untuk mengirim permintaan palsu yang tampaknya berasal dari pengguna yang sah.
+  - _Data Exposure_ : Jika cookies tidak diatur dengan benar, informasi sensitif seperti nama pengguna atau ID pengguna dapat terungkap jika peretas berhasil mencurinya
+
+
