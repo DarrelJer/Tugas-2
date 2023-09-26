@@ -268,3 +268,37 @@ def create_product(request):
 
 
 
+# Tugas 4
+
+**1. Apa itu Django UserCreationForm, dan jelaskan apa kelebihan dan kekurangannya?**
+  Django UserCreationForm adalah sebuah form yang digunakan untuk membuat pengguna baru yang dapat menggunakan aplikasi web kita. Form ini memiliki tiga bidang yaitu:        username, password1, dan password2.  
+  
+  Kelebihan : 
+    - Mudah digunakan dan dapat dimodifikasi dengan mudah.
+    - Secara _default_ form ini sudah menyediakan bidang verifikasi, sehingga kita tidak perlu            menuliskannya lagi.
+
+  Kelemahan : 
+    - Form ini cocok untuk skenario autentikasi sederhana, jika kita mau menggunakan autentikasi dengan metode lain (seperti dengan nomor gawai atau melalui email), maka kita perlu membuat form sendiri atau dengan _third parties_
+  
+**2.Apa perbedaan antara autentikasi dan otorisasi dalam konteks Django, dan mengapa keduanya penting?**
+
+- Autentikasi : Proses verifikasi identitas pengguna. Pada implementasinya biasanya menggunakan form untuk login.
+- Otorisasi : pengendalian hak akses pengguna setelah pengguna tersebut berhasil diautentikasi
+
+  Keduanya penting untuk memproteksi dan menjamin keamanan data milik seseorang dan fitur ini berguna untuk mengatur fungsi dari website dengan memberikan fasilitas-fasilitas.
+
+**3. Apa itu cookies dalam konteks aplikasi web, dan bagaimana Django menggunakan cookies untuk mengelola data sesi pengguna?**
+
+  Cookies adalah sejenis data yang disimpan di komputer atau perangkat pengguna saat mereka berinteraksi pada web. Cookies digunakan untuk berbagai tujuan, termasuk pengelolaan sesi pengguna, pelacakan perilaku pengguna, dan penyimpanan preferensi pengguna. Salah satu penggunaan utama cookies adalah untuk mengidentifikasi pengguna dan menyimpan informasi tertentu tentang mereka selama kunjungan mereka ke sebuah situs web.
+
+  Dalam konteks Django, cookies sering digunakan untuk mengelola data sesi pengguna. Sesuai dengan pendekatan stateless HTTP, di mana setiap permintaan dari browser dianggap independen, Django menggunakan cookies untuk mengidentifikasi dan melacak sesi pengguna.
+
+**4.Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai?**
+
+  Penggunaan cookies dalam web bersifat aman jika digunakan dengan benar, risiko potensial yang harus diwaspadai adalah:
+  - Data Senditif : Cookies dapat digunakan untuk menyimpan data sensitif seperti token otentikasi atau informasi pengguna.
+  - Cross-Site Scripting : Cross Site Scripting adalah jenis serangan yang dapat mengakibatkan skrip berbahaya dijalankan pada browser pengguna.
+  - CSRF :  Serangan CSRF melibatkan penggunaan cookies untuk mengirim permintaan palsu yang tampaknya berasal dari pengguna yang sah.
+  - _Data Exposure_ : Jika cookies tidak diatur dengan benar, informasi sensitif seperti nama pengguna atau ID pengguna dapat terungkap jika peretas berhasil mencurinya
+
+
