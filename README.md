@@ -1,3 +1,41 @@
+# Tugas 5
+**1. Jelaskan manfaat dari setiap element selector dan kapan waktu yang tepat untuk menggunakannya.**
+- Element Selector: Element selector akan memberikan kita akses untuk mengubah properti elemen yang memiliki tag yang sama. Selector ini digunakan saat kita ingin mengganti atribut semua elemen tertentu pada suatu berkas HTML.
+- ID Selector : ID yang unik dalam satu halaman web akan digunakan sebagai selectornya. Selector ini digunakan saat kita ingin mengganti sebuah element yang memiliki ID tersebut saja.
+- Class Selector : Class selector memberikan kita akses untuk mengubah properti dengan mengelompokkan elemen yang memiliki karakteristik serupa. Selector ini digunakan saat kita ingin mengganti style dari suatu bagian program yang sama atau memiliki fungsi yang sama.
+  
+
+**2. Jelaskan HTML5 Tag yang kamu ketahui.**
+- 'h1', 'h2', 'h3', 'h4', 'h5', dan 'h6' adalah heading yang dapat digunakan sebagai judul atau subjudul
+- '<p>' untuk mendefinisikan paragraf teks
+- '<table>' untuk membuat table untuk mengorganisir data
+- '<tr>' , '<th>', '<td>' digunakan di dalam table untuk mendefinisikan rows, header, dan data
+- '<div>'  digunakan untuk mendefinisikan container umum yang akan digunakan untuk mengelompokkan dan membuat struktur dari konten yang dibuat
+
+Itu adalah beberapa tag yang saya ketahui dan umum digunakan dalam tugas-tugas PBP.
+
+**3. Jelaskan perbedaan antara margin dan padding.**
+- Margin : Memberikan ruang atau spacing kosong di luar border (Bagian paling luar)
+- Padding : Memberikan ruang atau spacing kosong di luar content (Antara border dan content)
+
+Margin dan padding sama-sama mengosongkan ruang, tetapi margin berada di **bagian luar border** sedangkan padding berada **di antara border dan content**.
+
+**4. Jelaskan perbedaan antara framework CSS Tailwind dan Bootstrap. Kapan sebaiknya kita menggunakan Bootstrap daripada Tailwind, dan sebaliknya?**
+
+**5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step**
+
+  - 
+
+
+
+
+
+
+
+
+
+
+
 # Tugas-2
 #Darrel Jeremiah Simanjuntak, 2206829225, KA, PBP B
 
