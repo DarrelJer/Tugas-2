@@ -326,7 +326,78 @@ Itu adalah beberapa tag yang saya ketahui dan umum digunakan dalam tugas-tugas P
 Margin dan padding sama-sama mengosongkan ruang, tetapi margin berada di **bagian luar border** sedangkan padding berada **di antara border dan content**.
 
 **4. Jelaskan perbedaan antara framework CSS Tailwind dan Bootstrap. Kapan sebaiknya kita menggunakan Bootstrap daripada Tailwind, dan sebaliknya?**
+1) Ukuran File
+     - Bootstrap: Karena Bootstrap sudah menyediakan banyak komponen dan desain, file CSS dan JavaScript yang ada berukuran cukup besar dan dapat mempengaruhi kinerja situs web kita. 
+     - Tailwind: Tailwind CSS memiliki file CSS yang lebih kecil karena hanya menghasilkan kelas yang Anda gunakan. Ini dapat mengurangi ukuran file dan mempercepat waktu pemuatan situs Anda.
+
+2) Kemudahan Penggunaan
+     - Boostrap: Bootstrap memiliki komponen dan tata letak yang sudah didefinisikan, sehingga cocok untuk proyek yang membutuhkan pengembangan cepat tanpa banyak kustomisasi.Hal ini sangat berguna untuk pemula atau untuk orang yang ingin membangun prototipe dengan cepat.
+     - Tailwind: Tailwind lebih cocok untuk proyek-proyek di mana kita ingin merancang tampilan dengan sangat detail atau memiliki kebutuhan desain yang unik. Ini memerlukan lebih banyak penulisan kode tetapi memberikan kendali yang lebih besar.
+
+3) Kustomisasi
+     - Bootstrap menyediakan sejumlah opsi untuk mengkustomisasi , tetapi umumnya kita perlu menambahkan CSS tambahan atau memanipulasi gaya bawaan Bootstrap untuk mencapai tampilan yang diinginkan.
+     - Tailwind : Tailwind dirancang untuk kustomisasi yang lebih _expert_ atau detil. Kita dapat dengan mudah menyesuaikan tampilan Anda dengan menambahkan atau mengubah kelas CSS sesuai kebutuhan kita.
 
 **5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step**
+  Saya mengubah tampilan halaman Login dengan mengubah login.html seperti berikut
+  ```
+{% extends 'base.html' %}
 
-  - 
+{% block meta %}
+    <title>Login</title>
+{% endblock meta %}
+
+{% block content %}
+
+<div class = "login">
+    <div class = "container text-center">
+        <div class = "row">
+            <h1 class="login-head">INI BUKAN TOKO BANGUNAN!!!</h1>
+            <h2 class="login-msg">Silahkan Login.</h2>
+        </div>
+        <div class = "row justify-content-center align-items-center">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <style>
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        vertical-align: middle;
+                    }
+                    
+                    th, td {
+                        text-align: center;
+                        vertical-align: middle;
+                        padding: 10px; 
+                    }
+                </style>
+                <table>
+                    <tr>
+                        <td><input type="text" name="username" placeholder="Username" class="form-control"></td>
+                    </tr>
+                            
+                    <tr>
+                        <td><input type="password" name="password" placeholder="Password" class="form-control"></td>
+                    </tr>
+
+                    <tr></tr>
+                        <td><input class="btn btn-primary login_btn" type="submit" value="Login" style = "background-color: #252525; border:transparent"></td>
+                    </tr>
+                </table>
+            </form> 
+                {% if messages %}
+                    <ul>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}     
+                Don't have an account yet? <a href="{% url 'main:register' %}">Register Now</a>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+```
+
+
