@@ -311,11 +311,11 @@ def create_product(request):
   
 
 **2. Jelaskan HTML5 Tag yang kamu ketahui.**
-- '''h1''', '''h2''', '''h3''', '''h4''', '''h5''', dan '''h6''' adalah heading yang dapat digunakan sebagai judul atau subjudul
-- '''<p>''' untuk mendefinisikan paragraf teks
-- '''<table>''' untuk membuat table untuk mengorganisir data
-- '''<tr>''' , '''<th>''', '''<td>''' digunakan di dalam table untuk mendefinisikan rows, header, dan data
-- '''<div>'''  digunakan untuk mendefinisikan container umum yang akan digunakan untuk mengelompokkan dan membuat struktur dari konten yang dibuat
+- ```<h1>```, ```<h2>```, ```<h3>```, ```<h4>```, ```<h5>```, dan ```<h6>``` adalah heading yang dapat digunakan sebagai judul atau subjudul
+- ```<p>``` untuk mendefinisikan paragraf teks
+- ```<table>``` untuk membuat table untuk mengorganisir data
+- ```<tr>```, ```<th>```, ```<td>``` digunakan di dalam table untuk mendefinisikan rows, header, dan data
+- ```<div>```  digunakan untuk mendefinisikan container umum yang akan digunakan untuk mengelompokkan dan membuat struktur dari konten yang dibuat
 
 Itu adalah beberapa tag yang saya ketahui dan umum digunakan dalam tugas-tugas PBP.
 
