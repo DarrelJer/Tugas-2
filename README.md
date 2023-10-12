@@ -400,4 +400,23 @@ Margin dan padding sama-sama mengosongkan ruang, tetapi margin berada di **bagia
 {% endblock content %}
 ```
 
+# Tugas 6
+
+**1. Jelaskan perbedaan antara asynchronous programming dengan synchronous programming.**
+- Asynchronous:Operasi dieksekusi secara independen tanpa harus menunggu yang lain, Waktu respon lebih cepat, Penggunaan callback atau await/async untuk mengelola operasi asynchronous, dan Cocok untuk operasi jaringan, I/O berat, dan aplikasi yang perlu responsif terhadap input
+- Synchcronous : Operasi dieksekusi berurutan, satu per satu, Waktu respons lebih lambat karena operasi harus menunggu operasi sebelumnya selesai, Tidak memerlukan pengaturan khusus seperti callback, Cocok untuk tugas-tugas sederhana dan cepat
+
+**2. Dalam penerapan JavaScript dan AJAX, terdapat penerapan paradigma event-driven programming. Jelaskan maksud dari paradigma tersebut dan sebutkan salah satu contoh penerapannya pada tugas ini.**
+Event-driven programming digunakan untuk membangun aplikasi web yang responsif dan interaktif. Dalam tugas ini, paradigma ini terlihat pada tombol yang memicu fungsi addItem() dan deleteItem() ketika tombol "Add Item" atau "Delete" ditekan.
+
+**3. Jelaskan penerapan asynchronous programming pada AJAX.**
+Asynchronous programming pada AJAX adalah cara untuk melakukan operasi seperti pengambilan data dari server tanpa menghentikan eksekusi kode utama. Hal ini membuat aplikasi web tetap responsif dan efisien.
+
+**4. Pada PBP kali ini, penerapan AJAX dilakukan dengan menggunakan Fetch API daripada library jQuery. Bandingkanlah kedua teknologi tersebut dan tuliskan pendapat kamu teknologi manakah yang lebih baik untuk digunakan.**
+- Fetch API: Fetch API menyediakan Interface untuk mengambil resource. Fetch API memungkinkan untuk mengirim permintaan HTTP secara asynchronous dengan lebih efisien.
+- jQuery : jQuery adalah library JavaScript yang lebih besar dengan banyak fitur, termasuk fitur untuk mengirim permintaan HTTP asynchronous.
+Menurut saya, Fetch API lebih baik digunakan karena keunggulannya yang memiliki performa yang lebih optimal dan responsif dibandingkan dengan jQuery.
+
+
+
 
