@@ -1,132 +1,143 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Bukan Toko Bangunan</h1>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Welcome</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Welcome, {{ name }}</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="{% url 'main:logout' %}" class="nav-link">
+                        <button class="btn btn-outline-light me-2" type="button">Logout</button>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-    <h5>Name:</h5>
-    <p>{{name}}</p>
+    <div class="container mt-4">
+        <h1>Your Items</h1>
 
-    <h5>Class:</h5>
-    <p>{{class}}</p>
+        <h5>Name:</h5>
+        <p>{{ name }}</p>
 
-    <p>Kamu menyimpan {{products.count}} item pada aplikasi ini</p>
+        <h5>Class:</h5>
+        <p>{{ class }}</p>
 
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #bfb29d;
-        }
-        .edit-button, .delete-button {
-            margin-right: 10px; 
-        }
-    </style>
+        <h5>NPM:</h5>
+        <p>{{ npm }}</p>
 
-    <table id="product_table">
-        <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Description</th>
-            <th>Date Added</th>
-            <th>Actions</th>
-        </tr>
-        <!-- Isi tabel akan diisi oleh JavaScript -->
-    </table>
+        <h3 id="total_items" class="text-center">You have {{ total_items }} items</h3>
+        <div class="d-flex justify-content-center my-4">
+            <a href="{% url 'main:create_item' %}">
+                <button class="btn btn-primary">
+                    + Add New Product
+                </button>
+            </a>
+        </div>
+    
+        <div class="row justify-content-center" id="item_container"></div>
 
-    <br />
+        <div class="row justify-content-center" id="item_container"></div>
 
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Product by AJAX</button>
-
-    <a href="{% url 'main:logout' %}">
-        <button>
-            Logout
-        </button>
-    </a>
-
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Product</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="form">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="name" class="col-form-label">Name:</label>
-                            <input type="text" class="form-control" id="name" name="name"></input>
-                        </div>
-                        <div class="mb-3">
-                            <label for="price" class="col-form-label">Price:</label>
-                            <input type="number" class="form-control" id="price" name="price"></input>
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="col-form-label">Description:</label>
-                            <textarea class="form-control" id="description" name="description"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="button_add">Add Product</button>
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Item</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form" onsubmit="return false;">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="name" class="col-form-label">Name:</label>
+                                <input type="text" class="form-control" id="name" name="name" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="price" class="col-form-label">Price:</label>
+                                <input type="number" class="form-control" id="price" name="price" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="col-form-label">Description:</label>
+                                <textarea class="form-control" id="description" name="description"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Item</button>
+                    </div>
                 </div>
             </div>
+        </div>
+
+        <h5 class="text-center">Last login session: {{ last_login }}</h5>
+
+        <div class="d-flex justify-content-center">
+            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">+Add Item by AJAX</button>
         </div>
     </div>
 
     <script>
-        async function getProducts() {
-            const response = await fetch("{% url 'main:get_product_json' %}");
-            return await response.json();
+        async function getItems() {
+            return fetch("{% url 'main:get_item_json' %}").then((res) => res.json());
         }
 
-        async function refreshProducts() {
-            const products = await getProducts();
-            let htmlString = `<tr>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Description</th>
-                <th>Date Added</th>
-                <th>Actions</th>
-            </tr>`;
+        async function refreshItems() {
+            document.getElementById("item_container").innerHTML = "";
+            const items = await getItems();
 
-            products.forEach((item) => {
-                htmlString += `<tr>
-                    <td>${item.fields.name}</td>
-                    <td>${item.fields.price}</td>
-                    <td>${item.fields.description}</td>
-                    <td><!-- Format tanggal sesuai kebutuhan --></td>
-                    <td>
-                        <button class="edit-button">Edit</button>
-                        <button class="delete-button">Delete</button>
-                    </td>
-                </tr>`;
+            items.forEach((item) => {
+                const card = document.createElement("div");
+                card.className = "col-md-4";
+
+                card.innerHTML = `
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">${item.fields.name}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Price: ${item.fields.price}</h6>
+                            <p class="card-text">${item.fields.description}</p>
+                            <p class="card-text">Date Added: ${item.fields.date_added}</p>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-danger" data-url="{% url 'main:delete_item_ajax' 123 %}" onclick="deleteItem(this, ${item.pk})">- Delete</button>
+                            <a href="edit-item-ajax/${item.pk}"><button class="btn btn-primary">Edit</button></a>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById("item_container").appendChild(card);
             });
 
-            document.getElementById("product_table").innerHTML = htmlString;
+            // Update total_items
+            document.getElementById("total_items").textContent = `You have ${items.length} items`;
         }
 
-        document.getElementById("button_add").addEventListener('click', async () => {
-            let formData = new FormData(document.querySelector('#form'));
+        refreshItems();
 
-            await fetch("{% url 'main:add_product_ajax' %}", {
+        function addItem() {
+            fetch("{% url 'main:add_item_ajax' %}", {
                 method: "POST",
-                body: formData
-            });
+                body: new FormData(document.querySelector('#form')),
+            }).then(refreshItems);
 
-            $('#exampleModal').modal('hide');
-            await refreshProducts();
-        });
+            document.getElementById("form").reset();
+            return false;
+        }
 
-        refreshProducts();
+        document.getElementById("button_add").onclick = addItem;
+
+        function deleteItem(button, id) {
+            let url = button.getAttribute('data-url').replace('123', id);
+            fetch(url, {
+                method: "DELETE",
+            }).then(refreshItems);
+        }
+
     </script>
-
 {% endblock content %}
