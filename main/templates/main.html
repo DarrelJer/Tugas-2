@@ -9,29 +9,23 @@
     <h5>Class:</h5>
     <p>{{class}}</p>
 
-    <p>Kamu menyimpan {{total_items}} item pada aplikasi ini</p>
+    <p>Kamu menyimpan {{products.count}} item pada aplikasi ini</p>
+
     <style>
         table {
             width: 100%;
             border-collapse: collapse;
         }
-
         th, td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
-
         th {
             background-color: #bfb29d;
         }
-
-        .edit-button {
+        .edit-button, .delete-button {
             margin-right: 10px; 
-        }
-
-        .delete-button {
-            margin-left: 10px; 
         }
     </style>
 
@@ -41,50 +35,21 @@
             <th>Price</th>
             <th>Description</th>
             <th>Date Added</th>
+            <th>Actions</th>
         </tr>
-
-        {% comment %} Berikut cara menampilkan data produk di bawah baris ini {% endcomment %}
-
-        {% for product in products %}
-            <tr>
-                <td>{{product.name}}</td>
-                <td>{{product.price}}</td>
-                <td>{{product.description}}</td>
-                <td>{{product.date_added}}</td>
-                <td>
-                    <a href="{% url 'main:edit_product' product.pk %}">
-                        <button class="edit-button">
-                            Edit
-                        </button>
-                    </a>
-                    <a href="{% url 'main:delete_product' product.pk %}">
-                        <button class="delete-button">
-                            Delete
-                        </button>
-                    </a>
-                </td>
-            </tr>
-        {% endfor %}
+        <!-- Isi tabel akan diisi oleh JavaScript -->
     </table>
 
     <br />
 
-    <a href="{% url 'main:create_product' %}">
-        <button>
-            Add New Product
-        </button>
-    </a>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Product by AJAX</button>
 
     <a href="{% url 'main:logout' %}">
         <button>
             Logout
         </button>
     </a>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Product by AJAX</button>
 
-    <h5>Sesi terakhir login: {{ last_login }}</h5>
-
-    <table id="product_table"></table>
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -93,7 +58,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="form" onsubmit="return false;">
+                    <form id="form">
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="name" class="col-form-label">Name:</label>
@@ -111,7 +76,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Product</button>
+                    <button type="button" class="btn btn-primary" id="button_add">Add Product</button>
                 </div>
             </div>
         </div>
@@ -119,41 +84,49 @@
 
     <script>
         async function getProducts() {
-            return fetch("{% url 'main:get_product_json' %}").then((res) => res.json())
+            const response = await fetch("{% url 'main:get_product_json' %}");
+            return await response.json();
         }
+
         async function refreshProducts() {
-        document.getElementById("product_table").innerHTML = ""
-        const products = await getProducts()
-        let htmlString = `<tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Description</th>
-            <th>Date Added</th>
-        </tr>`
-        products.forEach((item) => {
-            htmlString += `\n<tr>
-            <td>${item.fields.name}</td>
-            <td>${item.fields.price}</td>
-            <td>${item.fields.description}</td>
-            <td>${item.fields.date_added}</td>
-        </tr>` 
-        })
-        
-        document.getElementById("product_table").innerHTML = htmlString
-    }
+            const products = await getProducts();
+            let htmlString = `<tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Date Added</th>
+                <th>Actions</th>
+            </tr>`;
 
-    refreshProducts()
-    
-        function addProduct() {
-            fetch("{% url 'main:add_product_ajax' %}", {
-                method: "POST",
-                body: new FormData(document.querySelector('#form'))
-            }).then(refreshProducts)
+            products.forEach((item) => {
+                htmlString += `<tr>
+                    <td>${item.fields.name}</td>
+                    <td>${item.fields.price}</td>
+                    <td>${item.fields.description}</td>
+                    <td><!-- Format tanggal sesuai kebutuhan --></td>
+                    <td>
+                        <button class="edit-button">Edit</button>
+                        <button class="delete-button">Delete</button>
+                    </td>
+                </tr>`;
+            });
 
-            document.getElementById("form").reset()
-            return false
+            document.getElementById("product_table").innerHTML = htmlString;
         }
-        document.getElementById("button_add").onclick = addProduct
+
+        document.getElementById("button_add").addEventListener('click', async () => {
+            let formData = new FormData(document.querySelector('#form'));
+
+            await fetch("{% url 'main:add_product_ajax' %}", {
+                method: "POST",
+                body: formData
+            });
+
+            $('#exampleModal').modal('hide');
+            await refreshProducts();
+        });
+
+        refreshProducts();
     </script>
 
 {% endblock content %}

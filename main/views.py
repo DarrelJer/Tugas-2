@@ -20,17 +20,12 @@ from django.http import JsonResponse
 
 
 
-@login_required(login_url='/login')
+@login_required(login_url='/login/')
 def show_main(request):
     products = Item.objects.filter(user=request.user)
-
-    context = {
-        'name': request.user.username,
-        'class': 'PBP B', 
-        'products': products,
-    }
-
+    context = {'name': request.user.username, 'class': 'PBP B', 'products': products}
     return render(request, "main.html", context)
+
 
 def create_product(request):
     form = ItemForm(request.POST or None)
@@ -65,19 +60,18 @@ def get_product_json(request):
     return HttpResponse(serializers.serialize('json', product_item))
 
 @csrf_exempt
+@login_required
 def add_product_ajax(request):
     if request.method == 'POST':
-        name = request.POST.get("name")
-        price = request.POST.get("price")
-        description = request.POST.get("description")
-        user = request.user
-
-        new_product = Item(name=name, price=price, description=description, user=user)
-        new_product.save()
-
-        return HttpResponse(b"CREATED", status=201)
-
-    return HttpResponseNotFound()
+        form = ItemForm(request.POST)
+        if form.is_valid():
+            new_product = form.save(commit=False)
+            new_product.user = request.user
+            new_product.save()
+            return JsonResponse({'status': 'success'}, status=201)
+        else:
+            return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+    return JsonResponse({'status': 'invalid method'}, status=405)
 
 def register(request):
     form = UserCreationForm()
@@ -106,11 +100,10 @@ def login_user(request):
     context = {}
     return render(request, 'login.html', context)
 
+@login_required
 def logout_user(request):
     logout(request)
-    response = HttpResponseRedirect(reverse('main:login'))
-    # response.delete_cookie('last_login')
-    return response
+    return HttpResponseRedirect(reverse('main:login'))
 
 def edit_product(request, id):
     # Get product berdasarkan ID
